@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "VIRYEYgN8CI=",
+  "success": true,
+  "projectFilePath": "/Users/ivanvashchenko/Desktop/docs-pacs/dxf_test/TestApp/TestApp.csproj",
+  "expectedPackageFiles": [
+    "/Users/ivanvashchenko/.nuget/packages/netdxf/2023.11.10/netdxf.2023.11.10.nupkg.sha512",
+    "/Users/ivanvashchenko/.nuget/packages/system.commandline/2.0.1/system.commandline.2.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
