@@ -29,3 +29,4 @@
 /Users/ivanvashchenko/Desktop/docs-pacs/dxf_test/TestApp/bin/Debug/net8.0/zh-Hans/System.CommandLine.resources.dll
 /Users/ivanvashchenko/Desktop/docs-pacs/dxf_test/TestApp/bin/Debug/net8.0/zh-Hant/System.CommandLine.resources.dll
 /Users/ivanvashchenko/Desktop/docs-pacs/dxf_test/TestApp/obj/Debug/net8.0/TestApp.csproj.Up2Date
+/Users/ivanvashchenko/Desktop/docs-pacs/dxf_test/TestApp/obj/Debug/net8.0/TestApp.sourcelink.json

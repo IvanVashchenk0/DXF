@@ -106,20 +106,19 @@ public static class DxfOrthogonalizer
     {
         if (poly.Vertexes == null || poly.Vertexes.Count < 2) return false;
 
-        // Convert netDxf vertices to PolylineOrthogonalizer.Pt
+        // Convert netDxf vertices to OrthoSnapper.Pt
         var pts = poly.Vertexes
-            .Select(v => new PolylineOrthogonalizer.Pt(v.Position.X, v.Position.Y))
+            .Select(v => new OrthoSnapper.Pt(v.Position.X, v.Position.Y))
             .ToList();
 
         bool closed = poly.IsClosed;
 
-        // Run orthogonalization
-        var cleaned = PolylineOrthogonalizer.StraightenToRightAngles(
+        // Run orthogonalization using simplified clustering algorithm
+        var cleaned = OrthoSnapper.SnapToOrthogonalLevels(
             pts,
             closed: closed,
             minStep: minStep,
-            rdpEps: rdpEps,
-            minEdgeLen: minEdgeLen
+            clusterTol: rdpEps  // Reuse rdpEps parameter as cluster tolerance
         );
 
         if (cleaned.Count < 2) return false;
@@ -142,21 +141,20 @@ public static class DxfOrthogonalizer
     {
         if (poly.Vertexes == null || poly.Vertexes.Count < 2) return false;
 
-        // Convert netDxf vertices to PolylineOrthogonalizer.Pt (using 2D projection)
+        // Convert netDxf vertices to OrthoSnapper.Pt (using 2D projection)
         // Polyline3D vertices are Vector3 directly
         var pts = poly.Vertexes
-            .Select(v => new PolylineOrthogonalizer.Pt(v.X, v.Y))
+            .Select(v => new OrthoSnapper.Pt(v.X, v.Y))
             .ToList();
 
         bool closed = poly.IsClosed;
 
-        // Run orthogonalization
-        var cleaned = PolylineOrthogonalizer.StraightenToRightAngles(
+        // Run orthogonalization using simplified clustering algorithm
+        var cleaned = OrthoSnapper.SnapToOrthogonalLevels(
             pts,
             closed: closed,
             minStep: minStep,
-            rdpEps: rdpEps,
-            minEdgeLen: minEdgeLen
+            clusterTol: rdpEps  // Reuse rdpEps parameter as cluster tolerance
         );
 
         if (cleaned.Count < 2) return false;

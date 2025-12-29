@@ -72,9 +72,58 @@ public class DxfTool
 
         try
         {
+            // Check file size and accessibility first
+            var fileInfo = new FileInfo(inputPath);
+            if (!fileInfo.Exists)
+            {
+                Console.Error.WriteLine($"Error: File '{inputPath}' does not exist.");
+                Environment.Exit(1);
+            }
+            
             Console.WriteLine($"Loading DXF file: {inputPath}");
-            var doc = DxfDocument.Load(inputPath);
-            Console.WriteLine($"Loaded successfully. Processing polylines...");
+            Console.WriteLine($"File size: {fileInfo.Length / 1024.0 / 1024.0:F2} MB");
+            
+            // Add timeout and better error handling
+            var loadStartTime = DateTime.Now;
+            DxfDocument doc;
+            
+            try
+            {
+                doc = DxfDocument.Load(inputPath);
+            }
+            catch (System.IO.IOException ioEx)
+            {
+                Console.Error.WriteLine($"IO Error loading DXF: {ioEx.Message}");
+                Console.Error.WriteLine("The file may be locked, corrupted, or inaccessible.");
+                Environment.Exit(1);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error loading DXF file: {ex.Message}");
+                Console.Error.WriteLine($"Error type: {ex.GetType().Name}");
+                if (ex.InnerException != null)
+                {
+                    Console.Error.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                Environment.Exit(1);
+                return;
+            }
+            
+            var loadTime = DateTime.Now - loadStartTime;
+            Console.WriteLine($"Loaded successfully in {loadTime.TotalSeconds:F2} seconds.");
+            
+            // Count entities (may need to iterate if Count property doesn't exist)
+            int entityCount = 0;
+            int poly2DCount = 0;
+            int poly3DCount = 0;
+            foreach (var e in doc.Entities.Polylines2D) { poly2DCount++; entityCount++; }
+            foreach (var e in doc.Entities.Polylines3D) { poly3DCount++; entityCount++; }
+            
+            Console.WriteLine($"Entities in file: {entityCount} (polyline entities counted)");
+            Console.WriteLine($"Polylines2D: {poly2DCount}");
+            Console.WriteLine($"Polylines3D: {poly3DCount}");
+            Console.WriteLine("Processing polylines...");
 
             int processedCount = 0;
 
@@ -122,9 +171,9 @@ public class DxfTool
         Console.WriteLine();
         Console.WriteLine("Options:");
         Console.WriteLine("  --layer, -l NAME     Process polylines on specific layer (default: all layers)");
-        Console.WriteLine("  --eps, -e VALUE      RDP simplification tolerance (default: 3.0)");
+        Console.WriteLine("  --eps, -e VALUE      Cluster tolerance for X/Y snapping (default: 3.0)");
         Console.WriteLine("  --minStep, -s VALUE  Minimum step distance (default: 1.0)");
-        Console.WriteLine("  --minEdgeLen, -m VALUE  Minimum edge length after cleanup (default: 2.0)");
+        Console.WriteLine("  --minEdgeLen, -m VALUE  (deprecated - kept for compatibility)");
         Console.WriteLine("  --all, -a            Process all closed polylines on all layers");
         Console.WriteLine("  --help, -h           Show this help message");
         Console.WriteLine();
